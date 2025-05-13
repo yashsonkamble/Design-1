@@ -1,39 +1,38 @@
 """
-I created two lists: one for the regular stack and another for tracking minimum values. In the push function, elements are added to both stacks if needed to maintain the minimum. In pop, if the top element of the min stack matches the popped element, it's removed from both stacks.
+I implemented a hash set using an array of lists to handle collisions through chaining. In the add method, I calculate the hash and insert the key into the corresponding list if it's not already there. For remove and contains, I use the same hash to find the correct list and check or delete the key.
 """
-class MinStack:
+class MyHashSet:
 
     def __init__(self):
-        self.stack = []
-        self.minStack = []
+        self.size = 10 ** 4
+        self.hash_table = [None] * self.size
 
-    def push(self, val: int) -> None:
-        self.stack.append(val)
-        if not self.minStack or val <= self.minStack[-1]:
-            self.minStack.append(val)
-
-    def pop(self) -> None:
-        if self.stack:
-            popElement = self.stack.pop()
-            if popElement == self.minStack[-1]:
-                self.minStack.pop()
-
-    def top(self) -> int:
-        if self.stack:
-            return self.stack[-1]
-        else:
-            return None
-
-    def getMin(self) -> int:
-        if self.minStack:
-            return self.minStack[-1]
-        else:
-            return None
+    def calculate_hash_value(self, key: int) -> int:
+        return key % self.size
         
+    def add(self, key: int) -> None:
+        hash_value = self.calculate_hash_value(key)
+        if self.hash_table[hash_value] == None:
+            self.hash_table[hash_value] = [key]
+        else:
+            self.hash_table[hash_value].append(key)
+        
+    def remove(self, key: int) -> None:
+        hash_value = self.calculate_hash_value(key)
+        if self.hash_table[hash_value] != None:
+            while key in self.hash_table[hash_value]:
+                self.hash_table[hash_value].remove(key)
 
-# Your MinStack object will be instantiated and called as such:
-# obj = MinStack()
-# obj.push(val)
-# obj.pop()
-# param_3 = obj.top()
-# param_4 = obj.getMin()
+    def contains(self, key: int) -> bool:
+        hash_value = self.calculate_hash_value(key)
+        if self.hash_table[hash_value] == None:
+            return False
+        else:
+            return key in self.hash_table[hash_value]
+
+
+# Your MyHashSet object will be instantiated and called as such:
+# obj = MyHashSet()
+# obj.add(key)
+# obj.remove(key)
+# param_3 = obj.contains(key)
